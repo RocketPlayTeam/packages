@@ -16,7 +16,7 @@ interface CacheConfig {
 
 /**
  * Used to initialize the redis client
- * This is called by any function if the redis client is not defined.
+ * This is called by any function if the redis client has not been initialzed yet.
  * @param config the configuration, defaults to environement variables or fallbacks
  */
 export function initRedis (config?: Partial<CacheConfig>) {
