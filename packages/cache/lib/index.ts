@@ -69,9 +69,10 @@ export async function getCached (key: string): Promise<any> {
 }
 
 /**
- * Used to
- * @param key the key the item is stored under
- * @param noParse Ignores the JSON parsing of the fetched value
+ * Used to cache an item
+ * @param key the key to cache the item under
+ * @param value the item's value
+ * @param expiry the item's time to live, in seconds
  * @returns the value (parsed unless specified in the config) or undefined.
  */
 export async function cacheItem (key: string, value: any, expiry?: number): Promise<boolean> {
