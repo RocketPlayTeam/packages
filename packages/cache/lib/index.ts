@@ -14,17 +14,21 @@ interface CacheConfig {
   useJson: boolean;
 }
 
+function clearKey (key: string) {
+  return `${Config.prefix || 'rcktcache'}__${key}`;
+}
+
 /**
  * Used to initialize the redis client
  * This is called by any function if the redis client has not been initialzed yet.
  * @param config the configuration, defaults to environement variables or fallbacks
  */
-export function initRedis (config?: Partial<CacheConfig>) {
+export function initCache (config?: Partial<CacheConfig>) {
   config = {
     host: process.env.REDIS_HOST || 'localhost',
     port: Number(process.env.REDIS_PORT || 6379),
     password: process.env.REDIS_PASSWORD || undefined,
-    prefix: 'rcktcache_',
+    prefix: 'rcktcache',
     useJson: true,
     ...config
   }
@@ -42,7 +46,7 @@ export function initRedis (config?: Partial<CacheConfig>) {
 }
 
 function getRedisClient (): RedisType {
-  if (!initialized) initRedis();
+  if (!initialized) initCache();
   if (client) return client;
   throw new Error('Client has not been initialized');
 }
@@ -53,7 +57,7 @@ function getRedisClient (): RedisType {
  * @returns the value (parsed unless specified in the config) or undefined.
  */
 export async function getCached (key: string): Promise<any> {
-  key = `${Config.prefix}_${key}`;
+  key = clearKey(key);
   let cached = await getRedisClient().get(key);
   if (!cached) return undefined;
   if (Config.useJson) {
@@ -72,7 +76,7 @@ export async function getCached (key: string): Promise<any> {
  */
 export async function cacheItem (key: string, value: any, expiry?: number): Promise<boolean> {
   try {
-    key = `${Config.prefix}_${key}`;
+    key = clearKey(key);
     await getRedisClient().set(key, Config.useJson ? JSON.stringify(value) : value, 'ex', expiry ? expiry : 15*60);
     return true;
   } catch (error) {
@@ -82,12 +86,10 @@ export async function cacheItem (key: string, value: any, expiry?: number): Prom
 
 export async function cacheDelete(key: string): Promise<boolean> {
   try {
-    key = `${Config.prefix}_${key}`;
+    key = clearKey(key);
     await getRedisClient().del(key);
     return true;
   } catch (error) {
     return false;
   }
 }
-
-export * from './keys';
