@@ -51,6 +51,8 @@ function getRedisClient (): RedisType {
   throw new Error('Client has not been initialized');
 }
 
+export const getCacheClient = getRedisClient;
+
 /**
  * Used to retrieve an item from the cache
  * @param key the key the item is stored under
