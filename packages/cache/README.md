@@ -13,6 +13,34 @@ initCache({
 });
 ```
 
+## Wrapper function
+
+Introduced in 1.1.0, CacheOrRun is a wrapper function that allows you to very simply cache any function while keeping all its types !
+
+Example:
+
+```typescript
+import { initCache, CacheOrRun } from '@rocketplay/cache';
+
+async function slowFunction (name: string) {
+  await new Promise((resolve) => setTimeout(resolve, 500));
+  return `Good day, ${name} !`;
+}
+
+const fast = CacheOrRun(slowFunction);
+
+async function MyApp () {
+  const myResult = await fast('Nicolas');
+  // 500ms delay on the first run
+  console.log(myResult);
+  const myCachedResult = await fast('Nicolas');
+  // Near instantanious result !
+  console.log(myCachedResult);
+}
+
+MyApp();
+```
+
 ## Simple example with express
 
 ```typescript
