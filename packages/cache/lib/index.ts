@@ -96,3 +96,21 @@ export async function cacheDelete(key: string): Promise<boolean> {
     return false;
   }
 }
+
+/**
+ * Wrapper to allow for a function to be either ran or grabbed from the redis cache
+ * @param fn the function
+ * @param ttl the TTL of the cache (defaults to 300s)
+ * @param keyModifier the key modifier (used to build to key along with the fn's parameters)
+ * @returns a promise arrow function that will either run fn or grab the known answer from the cache based on fn's args
+ */
+ export const CacheOrRun = <T extends Array<any>, U>(fn: (...args: T) => U|Promise<U>, ttl = 300, keyModifier = 'cache') => {
+  return async (...args: T): Promise<U> => {
+    const key = Buffer.from(args).join(keyModifier).toString();
+    const cached = await getCached(key);
+    if (cached) return cached as U;
+    const answer = await fn(...args);
+    await cacheItem(key, answer, ttl);
+    return answer;
+  }
+}
