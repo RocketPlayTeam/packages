@@ -15,7 +15,7 @@ interface CacheConfig {
 }
 
 function clearKey (key: string) {
-  return `${Config.prefix || 'rcktcache'}__${key}`;
+  return `${Config?.prefix || 'rcktcache'}__${key}`;
 }
 
 /**
