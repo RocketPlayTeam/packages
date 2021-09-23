@@ -106,7 +106,11 @@ export async function cacheDelete(key: string): Promise<boolean> {
  */
  export const CacheOrRun = <T extends Array<any>, U>(fn: (...args: T) => U|Promise<U>, ttl = 300, keyModifier = 'cache') => {
   return async (...args: T): Promise<U> => {
-    const key = Buffer.from(args).join(keyModifier).toString();
+    let key = fn.name;
+    for (const a of args) {
+      key += `${JSON.stringify(a)}${keyModifier}`;
+    }
+    key = Buffer.from(key).toString('base64');
     const cached = await getCached(key);
     if (cached) return cached as U;
     const answer = await fn(...args);
