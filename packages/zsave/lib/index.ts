@@ -48,13 +48,13 @@ export default function useZSave<T = any> (props: {
         if (original[key] !== value[key]) newChanges[key] = value[key];
       }
       setChanges(newChanges);
-    } catch (error) {}
+    } catch (e) {}
   }, [value, snapshot]);
   const save = async () => {
     let r = true;
     try {
       r = await props.onSave(changes);
-    } catch (error) {
+    } catch (e) {
       r = false;
     }
     if (r) {
