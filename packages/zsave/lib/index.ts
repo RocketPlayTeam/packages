@@ -23,7 +23,7 @@ export default function useZSave<T = any> (props: {
   useEffect(() => {
     const snapNow = JSON.stringify(value);
     const sameText = snapshot === snapNow;
-    const sameLength = snapNow.length === snapshot.length;
+    const sameLength = snapNow?.length === snapshot?.length;
     setPC(!sameLength && !sameText);
   }, [value, snapshot]);
   const edit = (key: keyof T, v: any) => {
