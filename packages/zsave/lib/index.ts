@@ -4,6 +4,7 @@ export default function useZSave<T = any> (props: {
   original: any;
   onSave: (updates: Partial<T>) => (boolean|Promise<boolean>);
   onEdit?: (key: keyof T, value: T[keyof T]) => (any|Promise<any>);
+  autoSave?: number;
 }): {
   edit: (k: keyof T, v: T[keyof T]) => void;
   save: () => Promise<void>;
@@ -16,6 +17,7 @@ export default function useZSave<T = any> (props: {
   const [snapshot, setSnapshot] = useState<string>('');
   const [pendingChanges, setPC] = useState(false);
   const [changes, setChanges] = useState<Partial<T>>({});
+  const [to, setTo] = useState<any>();
   useEffect(() => {
     setSnapshot(JSON.stringify(props.original));
     setValue(props.original);
@@ -27,6 +29,10 @@ export default function useZSave<T = any> (props: {
     setPC(!sameLength && !sameText);
   }, [value, snapshot]);
   const edit = (key: keyof T, v: any) => {
+    if (props.autoSave || to) {
+      clearTimeout(to);
+      setTo(undefined);
+    }
     setValue((value) => {
       value[key] = v;
       try {
@@ -39,6 +45,7 @@ export default function useZSave<T = any> (props: {
       } catch (error) {}
       return value;
     });
+    if (props.autoSave) setTo(setTimeout(save, props.autoSave));
   }
   useEffect(() => {
     try {
