@@ -42,7 +42,7 @@ export default function useZSave<T = any> (props: {
           if (original[key] !== value[key]) newChanges[key] = value[key];
         }
         setChanges(newChanges);
-        if (props.autoSave) setTo(setTimeout(() => save(), props.autoSave));
+        if (props.autoSave) setTo(setTimeout(() => save(newChanges), props.autoSave));
       } catch (error) {}
       return value;
     });
@@ -57,10 +57,11 @@ export default function useZSave<T = any> (props: {
       setChanges(newChanges);
     } catch (e) {}
   }, [value, snapshot]);
-  const save = async () => {
+  const save = async (withChanges: Partial<T> = {}) => {
+    const cs = {...changes, ...withChanges };
     let r = true;
     try {
-      r = await props.onSave(changes);
+      r = await props.onSave(cs);
     } catch (e) {
       r = false;
     }
