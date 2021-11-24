@@ -42,10 +42,10 @@ export default function useZSave<T = any> (props: {
           if (original[key] !== value[key]) newChanges[key] = value[key];
         }
         setChanges(newChanges);
+        if (props.autoSave) setTo(setTimeout(() => save(), props.autoSave));
       } catch (error) {}
       return value;
     });
-    if (props.autoSave) setTo(setTimeout(() => save(), props.autoSave));
   }
   useEffect(() => {
     try {
