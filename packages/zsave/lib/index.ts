@@ -45,7 +45,7 @@ export default function useZSave<T = any> (props: {
       } catch (error) {}
       return value;
     });
-    if (props.autoSave) setTo(setTimeout(save, props.autoSave));
+    if (props.autoSave) setTo(setTimeout(() => save(), props.autoSave));
   }
   useEffect(() => {
     try {
