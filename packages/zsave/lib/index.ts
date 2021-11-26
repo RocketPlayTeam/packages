@@ -27,7 +27,7 @@ export default function useZSave<T = any> (props: {
     const sameText = snapshot === snapNow;
     const sameLength = snapNow?.length === snapshot?.length;
     setPC(!sameLength && !sameText);
-  }, [value, snapshot]);
+  }, [value, snapshot, changes]);
   const edit = (key: keyof T, v: any) => {
     if (props.autoSave || to) {
       clearTimeout(to);
@@ -66,7 +66,7 @@ export default function useZSave<T = any> (props: {
       r = false;
     }
     if (r) {
-      setSnapshot(JSON.stringify(value));
+      setSnapshot(JSON.stringify(cs));
       setChanges({});
     }
   }
