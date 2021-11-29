@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 export default function useZSave<T = any> (props: {
   original: any;
@@ -9,6 +9,7 @@ export default function useZSave<T = any> (props: {
   edit: (k: keyof T, v: T[keyof T]) => void;
   save: () => Promise<void>;
   reset: () => void;
+  original: T;
   value: T;
   changes: Partial<T>;
   pendingChanges: boolean;
@@ -74,11 +75,19 @@ export default function useZSave<T = any> (props: {
     const original = JSON.parse(snapshot)
     setValue(original);
   }
+  const original = useMemo<T>(() => {
+    try {
+      return JSON.parse(snapshot);
+    } catch (e) {
+      return undefined;
+    }
+  }, [snapshot]);
   return {
     edit,
     changes,
     save,
     reset,
+    original,
     value,
     pendingChanges
   };
