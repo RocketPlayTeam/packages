@@ -85,7 +85,7 @@ export default function useZSave<T = any> (props: {
   return {
     edit,
     changes,
-    save,
+    save: async () => await save(),
     reset,
     original,
     value,
