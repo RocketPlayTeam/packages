@@ -13,10 +13,12 @@ export default function useZSave<T = any> (props: {
   value: T;
   changes: Partial<T>;
   pendingChanges: boolean;
+  saving: boolean;
 } {
   const [value, setValue] = useState<any>({});
   const [snapshot, setSnapshot] = useState<string>('');
   const [pendingChanges, setPC] = useState(false);
+  const [saving, setSaving] = useState(false);
   const [changes, setChanges] = useState<Partial<T>>({});
   const [to, setTo] = useState<any>();
   useEffect(() => {
@@ -59,6 +61,7 @@ export default function useZSave<T = any> (props: {
     } catch (e) {}
   }, [value, snapshot]);
   const save = async (withChanges: Partial<T> = {}) => {
+    setSaving(true);
     const cs = {...changes, ...withChanges };
     let r = true;
     try {
@@ -70,6 +73,7 @@ export default function useZSave<T = any> (props: {
       setSnapshot(JSON.stringify(cs));
       setChanges({});
     }
+    setSaving(false);
   }
   const reset = async () => {
     const original = JSON.parse(snapshot)
@@ -89,6 +93,7 @@ export default function useZSave<T = any> (props: {
     reset,
     original,
     value,
-    pendingChanges
+    pendingChanges,
+    saving
   };
 }
