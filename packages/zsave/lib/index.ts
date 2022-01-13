@@ -61,10 +61,10 @@ export default function useZSave<T = any> (props: {
     } catch (e) {}
   }, [value, snapshot]);
   const save = async (withChanges: Partial<T> = {}) => {
-    if (props.autoSave || to) {
-      clearTimeout(to);
-      setTo(undefined);
-    }
+    setTo((oto) => {
+      clearTimeout(oto);
+      return undefined;
+    });
     setSaving(true);
     const cs = {...changes, ...withChanges };
     let r = true;
