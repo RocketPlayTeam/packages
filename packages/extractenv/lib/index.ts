@@ -27,5 +27,6 @@ export function getEnv (dirname: string, maxIteration: number = 10, currentItera
 export function extractEnv (key: string, defaultValue?: string, dirname: string = __dirname) {
   if (production) return process.env[key] ?? defaultValue;
   const env = getEnv(dirname);
+  if (!env) return defaultValue;
   return env[key] ?? defaultValue;
 }
