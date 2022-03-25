@@ -1,8 +1,6 @@
 import { existsSync, readFileSync } from "fs";
 import { join } from "path";
 
-export const production = process.env.NODE_ENV === 'production';
-
 const envMap: {
   [key: string]: Record<string, string>
 } = {};
@@ -25,7 +23,8 @@ export function getEnv (dirname: string, maxIteration: number = 10, currentItera
 }
 
 export function extractEnv (key: string, defaultValue?: string, dirname: string = __dirname) {
-  if (production) return process.env[key] ?? defaultValue;
+  const inEnv = process.env[key];
+  if (inEnv) return inEnv;
   const env = getEnv(dirname);
   if (!env) return defaultValue;
   return env[key] ?? defaultValue;
