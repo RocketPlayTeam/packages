@@ -6,6 +6,7 @@ let client: RedisType | null = null;
 let Config: CacheConfig = undefined;
 
 interface CacheConfig {
+  url?: string;
   host: string;
   port: number;
   password: string;
@@ -37,7 +38,8 @@ export function initCache (config?: Partial<CacheConfig>) {
     ...Config
   }
   else Config = config as CacheConfig;
-  client = new Redis({
+  // @ts-ignore
+  client = new Redis(config.url ? config.url : {
     host: config.host,
     port: config.port,
     password: config.password
