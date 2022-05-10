@@ -22,8 +22,15 @@ export default function useZSave<T = any> (props: {
   const [changes, setChanges] = useState<Partial<T>>({});
   const [to, setTo] = useState<any>();
   useEffect(() => {
-    setSnapshot(JSON.stringify(props.original));
-    setValue(props.original);
+    const snapNow = JSON.stringify(props.original);
+    const sameText = snapshot === snapNow;
+    const sameLength = snapNow?.length === snapshot?.length;
+    const diff = !sameLength && !sameText;
+
+    if (diff) {
+      setSnapshot(JSON.stringify(props.original));
+      setValue(props.original);
+    }
   }, [props.original]);
   useEffect(() => {
     const snapNow = JSON.stringify(value);
