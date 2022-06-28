@@ -3,7 +3,11 @@
   "version": "1.2.2",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
-  "repository": "git@github.com:rcktpl/packages",
+  "repository": {
+    "type" : "git",
+    "url" : "https://github.com/rcktpl/packages.git",
+    "directory": "packages/zsave"
+  },
   "license": "MIT",
   "publishConfig": {
     "access": "public"
