@@ -31,20 +31,23 @@ export function initCache (config?: Partial<CacheConfig>) {
     password: process.env.REDIS_PASSWORD || undefined,
     prefix: 'rcktcache',
     useJson: true,
+    ...Config,
     ...config
   }
-  if (Config) config = {
-    ...config,
-    ...Config
-  }
-  else Config = config as CacheConfig;
-  // @ts-ignore
-  client = new Redis(config.url ? config.url : {
+  Config = config as CacheConfig;
+  if (config.url) {
+    client = new Redis(config.url, {
+      enableReadyCheck: true
+    });
+  } else client = new Redis({
     host: config.host,
     port: config.port,
-    password: config.password
-  });
-  initialized = true;
+    password: config.password,
+    enableReadyCheck: true
+  })
+  client.on('ready', () => {
+    initialized = true;
+  })
 }
 
 function getRedisClient (): RedisType {
@@ -82,7 +85,7 @@ export async function getCached (key: string): Promise<any> {
 export async function cacheItem (key: string, value: any, expiry?: number): Promise<boolean> {
   try {
     key = clearKey(key);
-    await getRedisClient().set(key, Config.useJson ? JSON.stringify(value) : value, 'ex', expiry ? expiry : 15*60);
+    await getRedisClient().set(key, Config.useJson ? JSON.stringify(value) : value, 'EX', expiry ? expiry : 15*60);
     return true;
   } catch (error) {
     return false;
