@@ -92,10 +92,14 @@ export async function cacheItem (key: string, value: any, expiry?: number): Prom
   }
 }
 
-export async function cacheDelete(key: string): Promise<boolean> {
+export async function cacheDelete(keys: string | string[]): Promise<boolean> {
   try {
-    key = clearKey(key);
-    await getRedisClient().del(key);
+    if (typeof keys === 'string') keys = [keys];
+    const pipeline = getRedisClient().pipeline();
+    for (const key of keys) {
+      pipeline.del(clearKey(key));
+    }
+    await pipeline.exec();
     return true;
   } catch (error) {
     return false;
